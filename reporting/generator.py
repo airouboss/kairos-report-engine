@@ -3,7 +3,6 @@ import markdown
 from jinja2 import Environment, FileSystemLoader
 from weasyprint import HTML
 import logging
-from utils.helpers import resolve_asset_images_for_report
 
 from datetime import datetime
 
@@ -68,8 +67,7 @@ def generate_report(project, client, firm, findings, output_path):
             else:
                 severity_counts['Informational'] += 1
             
-            steps_source = resolve_asset_images_for_report(finding.get('steps_to_reproduce') or '')
-            finding['steps_html'] = markdown.markdown(steps_source, extensions=['fenced_code', 'tables', 'md_in_html', 'toc', 'attr_list'])
+            finding['steps_html'] = markdown.markdown(finding.get('steps_to_reproduce') or '', extensions=['fenced_code', 'tables', 'md_in_html', 'toc', 'attr_list'])
 
         table_html = '<div style="page-break-inside: avoid; margin-bottom: 20px;">\n'
         table_html += '<table style="width: 100%; border-collapse: collapse; border: 1px solid #333;">\n'
@@ -331,4 +329,3 @@ def generate_attestation(project, client, firm, output_path, custom_bio=None):
     except Exception as e:
         logger.error(f"Failed to generate attestation: {e}")
         raise
-
